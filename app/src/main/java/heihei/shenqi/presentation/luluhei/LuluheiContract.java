@@ -1,0 +1,30 @@
+package heihei.shenqi.presentation.luluhei;
+
+import java.util.List;
+
+import heihei.shenqi.data.Task;
+import heihei.shenqi.presentation.BasePresenter;
+import heihei.shenqi.presentation.BaseView;
+
+/**
+ * User: lyjq(1752095474)
+ * Date: 2016-07-25
+ */
+public class LuluheiContract {
+
+    interface View extends BaseView<Presenter> {
+
+        void setLoadingIndicator(boolean active);
+
+        void showTasks(List<Task> tasks);
+
+        void addTasks(List<Task> tasks);
+
+        boolean isActive();
+    }
+
+    interface Presenter extends BasePresenter {
+        void onRefresh();
+        void onLoadMore();
+    }
+}

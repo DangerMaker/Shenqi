@@ -1,0 +1,107 @@
+package heihei.shenqi.data.source.remote;
+
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.text.TextUtils;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import heihei.shenqi.data.Task;
+import heihei.shenqi.data.source.TasksDataSource;
+import rx.Observable;
+import rx.Subscriber;
+
+/**
+ * User: lyjq(1752095474)
+ * Date: 2016-07-23
+ */
+public class TasksRemoteDataSource implements TasksDataSource {
+
+    private static TasksRemoteDataSource INSTANCE;
+    private static Context mContext;
+
+    //    private TaskApi service;
+    private static String BASE_URL = "http://www.luluhei.pw";
+
+    public static TasksRemoteDataSource getInstance(Context context) {
+        mContext = context.getApplicationContext();
+        if (INSTANCE == null) {
+            INSTANCE = new TasksRemoteDataSource();
+        }
+        return INSTANCE;
+    }
+
+    // Prevent direct instantiation.
+    private TasksRemoteDataSource() {
+
+    }
+
+    @Override
+    public Observable<List<Task>> getTasks(final int mPage) {
+
+        return Observable.create(new Observable.OnSubscribe<List<Task>>() {
+            @Override
+            public void call(Subscriber<? super List<Task>> subscriber) {
+                if (isThereInternetConnection()) {
+                    try {
+                        Document response = Jsoup.connect(BASE_URL + "/videos?o=bw&page=" + Integer.toString(mPage)).get();
+                        if (response != null) {
+                            subscriber.onNext(parseToTasks(response));
+                            subscriber.onCompleted();
+                        } else {
+                            subscriber.onError(new NetworkConnectionException());
+                        }
+                    } catch (Exception e) {
+                        subscriber.onError(new NetworkConnectionException(e.getCause()));
+                    }
+                } else {
+                    subscriber.onError(new NetworkConnectionException());
+                }
+            }
+        });
+    }
+
+    private List<Task> parseToTasks(Document document) {
+        Elements elements = document.select("div[class^=well well-sm]");
+        List<Task> tasks = new ArrayList<>();
+        for (Element element : elements) {
+            Element imgElement = element.select("img").first();
+            if (imgElement == null) {
+                continue;
+            }
+            String imgUrl = imgElement.attr("src");
+            System.out.println("img -------->" + imgUrl);
+
+            String title = imgElement.attr("title");
+            System.out.println("title ------->" + title);
+
+            Elements lenElement = element.select("div[class^=duration]");
+            String length = lenElement.text();
+            System.out.println("length ------->" + length);
+
+            Element urlElement = element.select("a").first();
+            String href = urlElement.attr("href");
+            System.out.println("href ------->" + href);
+            Task task = new Task(title,imgUrl,href,length);
+            tasks.add(task);
+        }
+        return tasks;
+    }
+
+    private boolean isThereInternetConnection() {
+        boolean isConnected;
+
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        isConnected = (networkInfo != null && networkInfo.isConnectedOrConnecting());
+        return isConnected;
+    }
+}
