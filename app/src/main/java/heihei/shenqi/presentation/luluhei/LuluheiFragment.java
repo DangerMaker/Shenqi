@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+
 import java.util.List;
 
 import butterknife.BindView;
@@ -24,14 +26,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * User: lyjq(1752095474)
  * Date: 2016-07-25
  */
-public class LuluheiFragment extends Fragment implements LuluheiContract.View{
+public class LuluheiFragment extends Fragment implements LuluheiContract.View {
 
     @BindView(R.id.recycler)
     RecyclerView mRecyclerView;
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout refreshLayout;
-    @BindView(R.id.progressbar)
-    ProgressBar mProgressBar;
+//    @BindView(R.id.progressbar)
+//    ProgressBar mProgressBar;
+    @BindView(R.id.empty)
+    RelativeLayout mEmpty;
 
     TasksAdapter mAdapter;
     LuluheiContract.Presenter mPresenter;
@@ -60,27 +64,30 @@ public class LuluheiFragment extends Fragment implements LuluheiContract.View{
         mRecyclerView.setAdapter(mAdapter);
         refreshLayout.setOnRefreshListener(refreshListener);
         mAdapter.setListener(moreListener);
+        mAdapter.setOnItemClickListener(onItemClickListener);
         return root;
     }
 
     @Override
     public void setLoadingIndicator(boolean active) {
         if (active) {
-            mProgressBar.setVisibility(View.VISIBLE);
+            mEmpty.setVisibility(View.VISIBLE);
         } else {
-            mProgressBar.setVisibility(View.GONE);
+            mEmpty.setVisibility(View.GONE);
             refreshLayout.setRefreshing(false);
         }
     }
 
     @Override
     public void showTasks(List<Task> tasks) {
-        mAdapter.updateItems(tasks);
+        if (tasks != null)
+            mAdapter.updateItems(tasks);
     }
 
     @Override
     public void addTasks(List<Task> tasks) {
-        mAdapter.addItems(tasks);
+        if (tasks != null)
+            mAdapter.addItems(tasks);
     }
 
     @Override
@@ -116,6 +123,14 @@ public class LuluheiFragment extends Fragment implements LuluheiContract.View{
         @Override
         public void onListEnded() {
             mPresenter.onLoadMore();
+        }
+    };
+
+    TasksAdapter.OnItemClickListener onItemClickListener = new TasksAdapter.OnItemClickListener() {
+        @Override
+        public void onItemClick(View view, int postion) {
+            Task task = mAdapter.getItem(postion);
+            System.out.println(task.getTitle());
         }
     };
 }

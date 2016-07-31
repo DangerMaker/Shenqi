@@ -30,7 +30,7 @@ public class TasksAdapter extends BaseRecyclerAdapter<Task> {
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder holder = null;
         View view = LayoutInflater.from(mContext).inflate(R.layout.item_tasks,null);
-        holder = new taskHolder(view);
+        holder = new taskHolder(view,onItemClickListener);
         return holder;
     }
 
@@ -48,15 +48,25 @@ public class TasksAdapter extends BaseRecyclerAdapter<Task> {
         }
     }
 
-    protected class taskHolder extends RecyclerView.ViewHolder {
+    protected class taskHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         @BindView(R.id.img)
         SimpleDraweeView simpleDraweeView;
         @BindView(R.id.title)
         TextView textView;
+        private OnItemClickListener onItemClickListener;
 
-        public taskHolder(View itemView) {
+        public taskHolder(View itemView,OnItemClickListener onItemClickListener) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            this.onItemClickListener = onItemClickListener;
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if(onItemClickListener != null){
+                onItemClickListener.onItemClick(v,getPosition());
+            }
         }
     }
 
@@ -68,5 +78,15 @@ public class TasksAdapter extends BaseRecyclerAdapter<Task> {
 
     public interface ListAdapterListener {
         void onListEnded();
+    }
+
+    private OnItemClickListener onItemClickListener;
+
+    public interface OnItemClickListener {
+        public void onItemClick(View view, int postion);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener){
+        this.onItemClickListener = listener;
     }
 }

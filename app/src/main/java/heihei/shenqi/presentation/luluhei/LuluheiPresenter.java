@@ -25,6 +25,7 @@ public class LuluheiPresenter implements LuluheiContract.Presenter {
     private final LuluheiContract.View mView;
 
     private final static int INIT_PAGE_NUM = 1;
+    private boolean getDate = false;
     private CompositeSubscription mSubscriptions;
     private int mPage = INIT_PAGE_NUM;
 
@@ -37,8 +38,10 @@ public class LuluheiPresenter implements LuluheiContract.Presenter {
 
     @Override
     public void subscribe() {
-        mView.setLoadingIndicator(true);
-        onRefresh();
+        if(!getDate) {
+            mView.setLoadingIndicator(true);
+            onRefresh();
+        }
     }
 
     @Override
@@ -69,6 +72,7 @@ public class LuluheiPresenter implements LuluheiContract.Presenter {
                     @Override
                     public void onNext(List<Task> tasks) {
                         System.out.println("onNext");
+                        getDate = true;
                         if(mPage == INIT_PAGE_NUM) {
                             mView.showTasks(tasks);
                         }else{
