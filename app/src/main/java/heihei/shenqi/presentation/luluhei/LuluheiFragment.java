@@ -1,11 +1,14 @@
 package heihei.shenqi.presentation.luluhei;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +20,10 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import heihei.frame.view.GridMarginDecoration;
+import heihei.shenqi.Config;
 import heihei.shenqi.R;
 import heihei.shenqi.data.Task;
+import heihei.shenqi.video.PlayerActivity;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -131,6 +136,14 @@ public class LuluheiFragment extends Fragment implements LuluheiContract.View {
         public void onItemClick(View view, int postion) {
             Task task = mAdapter.getItem(postion);
             System.out.println(task.getTitle());
+            String[] video = task.getUrl().split("/");
+            Intent mpdIntent = new Intent(getActivity(), PlayerActivity.class)
+//                    .setData(Uri.parse("http://www.luluhei.pw/media/player/config_m.php?vkey=18944"))
+                    .setData(Uri.parse(Config.BASE_LULUHEI_URL + "/media/player/config_m.php?vkey=" + video[2]))
+                    .putExtra(PlayerActivity.CONTENT_ID_EXTRA, "3pg")
+                    .putExtra(PlayerActivity.CONTENT_TYPE_EXTRA, "0")
+                    .putExtra(PlayerActivity.PROVIDER_EXTRA, task.getTitle());
+            startActivity(mpdIntent);
         }
     };
 }

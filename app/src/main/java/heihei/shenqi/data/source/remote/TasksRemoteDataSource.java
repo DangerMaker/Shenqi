@@ -13,6 +13,7 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 import java.util.List;
 
+import heihei.shenqi.Config;
 import heihei.shenqi.data.Task;
 import heihei.shenqi.data.source.TasksDataSource;
 import rx.Observable;
@@ -28,7 +29,7 @@ public class TasksRemoteDataSource implements TasksDataSource {
     private static Context mContext;
 
     //    private TaskApi service;
-    private static String BASE_URL = "http://www.luluhei.pw";
+    private static String BASE_URL = Config.BASE_LULUHEI_URL;
 
     public static TasksRemoteDataSource getInstance(Context context) {
         mContext = context.getApplicationContext();
