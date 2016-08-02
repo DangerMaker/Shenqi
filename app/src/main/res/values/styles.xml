@@ -21,4 +21,12 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:minWidth">40dp</item>
     </style>
+
+    <style name="homepage_tab_text">
+        <item name="android:textSize">10dp</item>
+        <item name="android:textColor">@drawable/homepage_tab_text_selector</item>
+        <item name="android:gravity">top</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">18dp</item>
+    </style>
 </resources>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_alignParentBottom="true"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <FrameLayout android:id="@+id/layout_home" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0">
+        <View android:layout_gravity="bottom" android:background="@drawable/main_tab_selector" android:layout_width="fill_parent" android:layout_height="50dp" />
+        <LinearLayout android:gravity="center_horizontal" android:layout_gravity="bottom" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content">
+            <ImageView android:id="@+id/img_home" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/homepage_tab_home_selector" android:scaleType="centerInside" android:contentDescription="@null" />
+            <TextView android:id="@+id/text_home" android:text="推荐" style="@style/homepage_tab_text" />
+        </LinearLayout>
+    </FrameLayout>
+    <FrameLayout android:id="@+id/layout_channel" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0">
+        <View android:layout_gravity="bottom" android:background="@drawable/main_tab_selector" android:layout_width="fill_parent" android:layout_height="50dp" />
+        <LinearLayout android:gravity="center_horizontal" android:layout_gravity="bottom" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content">
+            <ImageView android:id="@+id/img_channel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/homepage_tab_channel_selector" android:scaleType="centerInside" android:contentDescription="@null" />
+            <TextView android:id="@+id/text_channel" android:text="频道" style="@style/homepage_tab_text" />
+        </LinearLayout>
+    </FrameLayout>
+    <FrameLayout android:id="@+id/layout_subscribe" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0">
+        <View android:layout_gravity="bottom" android:background="@drawable/main_tab_selector" android:layout_width="fill_parent" android:layout_height="50dp" />
+        <LinearLayout android:gravity="center_horizontal" android:layout_gravity="bottom" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content">
+            <RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content">
+                <ImageView android:id="@+id/img_subscribe" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/homepage_tab_subscribe_selector" android:scaleType="centerInside" android:layout_centerHorizontal="true" android:contentDescription="@null" />
+            </RelativeLayout>
+            <TextView android:id="@+id/text_subscribe" android:text="订阅" style="@style/homepage_tab_text" />
+        </LinearLayout>
+    </FrameLayout>
+    <FrameLayout android:id="@+id/layout_vip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0">
+        <View android:layout_gravity="bottom" android:background="@drawable/main_tab_selector" android:layout_width="fill_parent" android:layout_height="50dp" />
+        <LinearLayout android:gravity="center_horizontal" android:layout_gravity="bottom" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content">
+            <ImageView android:id="@+id/img_vip" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/homepage_tab_vip_selector" android:scaleType="centerInside" android:contentDescription="@null" />
+            <TextView android:id="@+id/text_vip" android:text="会员" style="@style/homepage_tab_text" />
+        </LinearLayout>
+    </FrameLayout>
+    <FrameLayout android:id="@+id/layout_user" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0">
+        <View android:layout_gravity="bottom" android:background="@drawable/main_tab_selector" android:layout_width="fill_parent" android:layout_height="50dp" />
+        <LinearLayout android:gravity="center_horizontal" android:layout_gravity="bottom" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content">
+            <RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content">
+                <ImageView android:id="@+id/img_user" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/homepage_tab_user_selector" android:scaleType="centerInside" android:layout_centerHorizontal="true" android:contentDescription="@null" />
+            </RelativeLayout>
+            <TextView android:id="@+id/text_user" android:text="我的" style="@style/homepage_tab_text" />
+        </LinearLayout>
+    </FrameLayout>
+</LinearLayout>
