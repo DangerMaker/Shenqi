@@ -1,5 +1,6 @@
 package heihei.shenqi.presentation.luluhei;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,15 +15,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import heihei.frame.view.GridMarginDecoration;
 import heihei.shenqi.Config;
 import heihei.shenqi.R;
 import heihei.shenqi.data.Task;
+import heihei.shenqi.data.source.remote.TasksRemoteDataSource;
 import heihei.shenqi.video.PlayerActivity;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -42,9 +46,10 @@ public class LuluheiFragment extends Fragment implements LuluheiContract.View {
     @BindView(R.id.empty)
     RelativeLayout mEmpty;
 
+    Context mContext;
     TasksAdapter mAdapter;
     LuluheiContract.Presenter mPresenter;
-
+    private Unbinder unbinder;
     public static LuluheiFragment newInstance() {
         return new LuluheiFragment();
     }
@@ -52,6 +57,8 @@ public class LuluheiFragment extends Fragment implements LuluheiContract.View {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = getActivity();
+        new LuluheiPresenter(TasksRemoteDataSource.getInstance(mContext),this);
         mAdapter = new TasksAdapter(getContext());
     }
 
@@ -59,7 +66,7 @@ public class LuluheiFragment extends Fragment implements LuluheiContract.View {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_luluhei, container, false);
-        ButterKnife.bind(this, root);
+        unbinder = ButterKnife.bind(this, root);
 
         GridLayoutManager mLayoutManager = new GridLayoutManager(getContext(), 2);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -96,6 +103,11 @@ public class LuluheiFragment extends Fragment implements LuluheiContract.View {
     }
 
     @Override
+    public void showError(String str) {
+        Toast.makeText(getActivity(), str, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public boolean isActive() {
         return isAdded();
     }
@@ -115,6 +127,12 @@ public class LuluheiFragment extends Fragment implements LuluheiContract.View {
     public void onPause() {
         super.onPause();
         mPresenter.unsubscribe();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ;unbinder.unbind();
     }
 
     SwipeRefreshLayout.OnRefreshListener refreshListener = new SwipeRefreshLayout.OnRefreshListener() {

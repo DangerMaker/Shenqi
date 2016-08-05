@@ -29,4 +29,22 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">18dp</item>
     </style>
+
+    <style name="toolbar_tab_text">
+        <item name="android:textSize">17dp</item>
+        <item name="android:textColor">@color/toolbar_text_selector</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/toolbar_menu_bg</item>
+        <item name="android:paddingLeft">13.0dip</item>
+        <item name="android:paddingRight">13.0dip</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">fill_parent</item>
+    </style>
+
+    <style name="toolbar_menu_style">
+        <item name="android:background">@drawable/toolbar_menu_bg</item>
+        <item name="android:layout_width">46dp</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:scaleType">center</item>
+    </style>
 </resources>

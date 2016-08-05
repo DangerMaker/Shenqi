@@ -28,6 +28,6 @@ public class LuluheiActivity extends AppCompatActivity {
                     luluheiFragment, R.id.contentFrame);
         }
 
-        new LuluheiPresenter(TasksRemoteDataSource.getInstance(this),luluheiFragment);
+//        new LuluheiPresenter(TasksRemoteDataSource.getInstance(this),luluheiFragment);
     }
 }

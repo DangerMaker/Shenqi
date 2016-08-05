@@ -9,6 +9,10 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
+import heihei.shenqi.data.source.remote.TasksRemoteDataSource;
+import heihei.shenqi.presentation.luluhei.LuluheiFragment;
+import heihei.shenqi.presentation.luluhei.LuluheiPresenter;
+
 /**
  * Created by Administrator on 2016/8/1.
  */
@@ -39,9 +43,9 @@ public class HomePageAdapter extends FragmentPagerAdapter{
             default:
                 return localObject;
             case POSITION_HOME_ITEM:
-                return new EmptyFragment();
+                return new HomeContainerFragment();
             case POSITION_CHANNEL_ITEM:
-                return new EmptyFragment();
+                return   new LuluheiFragment();
             case POSITION_SUBSCRIBE_ITEM:
                 return new EmptyFragment();
             case POSITION_VIP_ITEM:
@@ -54,14 +58,13 @@ public class HomePageAdapter extends FragmentPagerAdapter{
     @Override
     public Fragment getItem(int position) {
         Log.e(TAG, "getItem: :" + position + "" );
-        Fragment fragment2 = (Fragment)this.fragments.get(position);
-        Fragment fragment1 = fragment2;
-        if(fragment2 == null){
-            fragment1 = CreateFragment(position);
-            this.fragments.put(position,fragment1);
+        Fragment fragment = (Fragment)this.fragments.get(position);
+        if(fragment == null){
+            fragment = CreateFragment(position);
+            this.fragments.put(position,fragment);
         }
-        ((EmptyFragment)fragment1).setTextView(position + "heihei");
-        return fragment1;
+//        ((EmptyFragment)fragment).setTextView(position + "heihei");
+        return fragment;
     }
 
     @Override

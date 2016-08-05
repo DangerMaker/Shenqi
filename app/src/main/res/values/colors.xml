@@ -8,4 +8,6 @@
     <color name="main_bottom_line">#D9D9D9</color>
     <color name="youku_blue">#ff088bd6</color>
     <color name="youku_gray">#ff888888</color>
+    <color name="toolbar_menu_bg">#ffdbdbdb</color>
+
 </resources>

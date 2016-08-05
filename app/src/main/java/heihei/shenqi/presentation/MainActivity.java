@@ -3,6 +3,7 @@ package heihei.shenqi.presentation;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 
 import butterknife.BindView;
@@ -14,6 +15,7 @@ import heihei.shenqi.presentation.main.HomePageAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final String TAG = this.getClass().getSimpleName();
     @BindView(R.id.layout_home)
     View layout_YoukuHome;
     @BindView(R.id.layout_channel)
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     ViewPager viewpager;
 
     HomePageAdapter homeAdapter;
+    private int initPos = 0;
 
     @OnClick({R.id.layout_home, R.id.layout_channel, R.id.layout_subscribe, R.id.layout_vip, R.id.layout_user})
     public void switchtab(View view) {
@@ -53,9 +56,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.e(TAG, "onCreate: " + "" );
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        if(savedInstanceState != null){
+            initPos = savedInstanceState.getInt("pos");
+        }
         getWindow().setFormat(PixelFormat.TRANSLUCENT);
         InitView();
         InitData();
@@ -70,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         if (homeAdapter == null)
             this.homeAdapter = new HomePageAdapter(this, viewpager);
         viewpager.setAdapter(homeAdapter);
-        switchTab(0);
+        switchTab(initPos);
     }
 
     public void switchTab(int paramInt) {
@@ -112,5 +119,11 @@ public class MainActivity extends AppCompatActivity {
         if (viewpager.getCurrentItem() != paramInt) {
             viewpager.setCurrentItem(paramInt);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt("pos",viewpager.getCurrentItem());
+        super.onSaveInstanceState(outState);
     }
 }

@@ -20,6 +20,7 @@ public class LuluheiContract {
 
         void addTasks(List<Task> tasks);
 
+        void showError(String str);
         boolean isActive();
     }
 

@@ -67,6 +67,7 @@ public class LuluheiPresenter implements LuluheiContract.Presenter {
                     public void onError(Throwable e) {
                         System.out.println("onError");
                         mView.setLoadingIndicator(false);
+                        mView.showError("Error:" + e.getMessage());
                     }
 
                     @Override
