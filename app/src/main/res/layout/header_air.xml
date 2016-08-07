@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<heihei.shenqi.widget.BannerView
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:id="@+id/header"
+    android:layout_height="wrap_content">
+
+</heihei.shenqi.widget.BannerView>

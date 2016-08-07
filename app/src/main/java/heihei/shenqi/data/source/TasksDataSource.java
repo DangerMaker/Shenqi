@@ -2,6 +2,7 @@ package heihei.shenqi.data.source;
 
 import java.util.List;
 
+import heihei.shenqi.data.Air;
 import heihei.shenqi.data.Task;
 import rx.Observable;
 
@@ -10,5 +11,8 @@ import rx.Observable;
  * Date: 2016-07-23
  */
 public interface TasksDataSource {
+
     Observable<List<Task>> getTasks(int page);
+
+    Observable<List<Task>> getAirs(int page);
 }

@@ -18,6 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import heihei.shenqi.R;
+import heihei.shenqi.presentation.air.AirFragment;
 
 /**
  * Created by Administrator on 2016/8/4.
@@ -61,10 +62,10 @@ public class HomeContainerFragment extends Fragment {
     private void initTabsData(){
         vestData.clear();
         VestFragment fragment1 = new VestFragment(new EmptyFragment(),"图片");
-        VestFragment fragment2 = new VestFragment(new EmptyFragment(),"视频");
+        VestFragment fragment2 = new VestFragment(AirFragment.newInstance(),"视频");
         VestFragment fragment3 = new VestFragment(new EmptyFragment(),"文字");
         ((EmptyFragment)fragment1.getFragment()).setTextView("tab1");
-        ((EmptyFragment)fragment2.getFragment()).setTextView("tab2");
+//        ((EmptyFragment)fragment2.getFragment()).setTextView("tab2");
         ((EmptyFragment)fragment3.getFragment()).setTextView("tab3");
         vestData.add(fragment1);
         vestData.add(fragment2);
