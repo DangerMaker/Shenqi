@@ -11,8 +11,10 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import heihei.frame.BannerModel;
 import heihei.shenqi.Config;
 import heihei.shenqi.data.Air;
 import heihei.shenqi.data.Task;
@@ -32,6 +34,7 @@ public class TasksRemoteDataSource implements TasksDataSource {
     //    private TaskApi service;
     private static String BASE_URL = Config.BASE_LULUHEI_URL;
     private static String BASE_AIR＿URL = "http://airav.cc";
+    private static String BASE_RTYS＿URL = "http://www.27270.com/ent/rentiyishu/list_32_";
 
     public static TasksRemoteDataSource getInstance(Context context) {
         mContext = context.getApplicationContext();
@@ -96,6 +99,30 @@ public class TasksRemoteDataSource implements TasksDataSource {
         });
     }
 
+    @Override
+    public Observable<List<Task>> getRtys(final int mPage) {
+        return Observable.create(new Observable.OnSubscribe<List<Task>>() {
+            @Override
+            public void call(Subscriber<? super List<Task>> subscriber) {
+                if (isThereInternetConnection()) {
+                    try {
+                        Document response = Jsoup.connect(BASE_RTYS＿URL + Integer.toString(mPage) + ".html").get();
+                        if (response != null) {
+                            subscriber.onNext(parseToRtys(response));
+                            subscriber.onCompleted();
+                        } else {
+                            subscriber.onError(new NetworkConnectionException());
+                        }
+                    } catch (Exception e) {
+                        subscriber.onError(new NetworkConnectionException(e.getCause()));
+                    }
+                } else {
+                    subscriber.onError(new NetworkConnectionException());
+                }
+            }
+        });
+    }
+
     private List<Task> parseToTasks(Document document) {
         Elements elements = document.select("div[class^=well well-sm]");
         List<Task> tasks = new ArrayList<>();
@@ -139,6 +166,45 @@ public class TasksRemoteDataSource implements TasksDataSource {
             System.out.println("title ------->" + title);
 
             Elements hrefElement = element.select("a[class^=ga_click]");
+            String href = hrefElement.attr("href");
+            System.out.println("href ------->" + href);
+
+            Task task = new Task(title,imgUrl,href,"");
+            tasks.add(task);
+        }
+        return tasks;
+    }
+
+    private List<Task> parseToRtys(Document document) {
+//        Elements elements = document.select("div[class^=MeinvTuPianBox]");
+        Elements elements = document.select("div[class^=libox]");
+        Iterator<Element> iterator = elements.iterator();
+        int i = 0;
+
+        while (iterator.hasNext()) {
+            if (i < 8) {
+                iterator.next();
+                iterator.remove();
+                i++;
+            }else{
+                break;
+            }
+        }
+
+        List<Task> tasks = new ArrayList<>();
+        for (Element element : elements) {
+            Element imgElement = element.select("img").first();
+            if (imgElement == null) {
+                continue;
+            }
+            String imgUrl = imgElement.attr("lazysrc");
+            System.out.println("img -------->" + imgUrl);
+
+            Elements titleElement = element.select("p");
+            String title = titleElement.text();
+            System.out.println("title ------->" + title);
+
+            Elements hrefElement = element.select("a");
             String href = hrefElement.attr("href");
             System.out.println("href ------->" + href);
 

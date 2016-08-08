@@ -15,4 +15,6 @@ public interface TasksDataSource {
     Observable<List<Task>> getTasks(int page);
 
     Observable<List<Task>> getAirs(int page);
+
+    Observable<List<Task>> getRtys(int page);
 }

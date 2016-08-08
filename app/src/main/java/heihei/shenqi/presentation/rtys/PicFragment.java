@@ -1,4 +1,4 @@
-package heihei.shenqi.presentation.air;
+package heihei.shenqi.presentation.rtys;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,30 +9,27 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.facebook.drawee.view.SimpleDraweeView;
-import com.jcodecraeer.xrecyclerview.XRecyclerView;
-
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import heihei.frame.BannerModel;
 import heihei.frame.view.GridMarginDecoration;
 import heihei.shenqi.Config;
 import heihei.shenqi.R;
 import heihei.shenqi.data.Task;
 import heihei.shenqi.data.source.remote.TasksRemoteDataSource;
+import heihei.shenqi.presentation.luluhei.LuluheiContract;
+import heihei.shenqi.presentation.luluhei.LuluheiPresenter;
+import heihei.shenqi.presentation.luluhei.TasksAdapter;
 import heihei.shenqi.video.PlayerActivity;
-import heihei.shenqi.widget.BannerView;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -40,49 +37,51 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * User: lyjq(1752095474)
  * Date: 2016-07-25
  */
-public class AirFragment extends Fragment implements AirContract.View {
+public class PicFragment extends Fragment implements PicContract.View {
 
-    @BindView(R.id.xrecycler)
-    XRecyclerView mRecyclerView;
-
+    private final String TAG = this.getClass().getSimpleName();
+    @BindView(R.id.recycler)
+    RecyclerView mRecyclerView;
+    @BindView(R.id.swipe_refresh)
+    SwipeRefreshLayout refreshLayout;
+//    @BindView(R.id.progressbar)
+//    ProgressBar mProgressBar;
     @BindView(R.id.empty)
     RelativeLayout mEmpty;
 
-    BannerView headerView;
     Context mContext;
-    AirAdapter mAdapter;
-    AirContract.Presenter mPresenter;
+    PicAdapter mAdapter;
+    PicContract.Presenter mPresenter;
     private Unbinder unbinder;
 
-    public static AirFragment newInstance() {
-        return new AirFragment();
+    private boolean hasStarted = false;
+
+    public static PicFragment newInstance() {
+        return new PicFragment();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = getActivity();
-        new AirPresenter(TasksRemoteDataSource.getInstance(mContext), this);
-        mAdapter = new AirAdapter(getContext());
+        new PicPresenter(TasksRemoteDataSource.getInstance(mContext),this);
+        mAdapter = new PicAdapter(getContext());
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_air, container, false);
+        View root = inflater.inflate(R.layout.fragment_luluhei, container, false);
         unbinder = ButterKnife.bind(this, root);
 
-        GridLayoutManager mLayoutManager = new GridLayoutManager(getContext(), 3);
+        GridLayoutManager mLayoutManager = new GridLayoutManager(getContext(), 2);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setItemViewCacheSize(5);
+        mRecyclerView.addItemDecoration(new GridMarginDecoration(getContext(), 8));
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setLoadingListener(refreshListener);
-        mRecyclerView.setLoadingMoreEnabled(false);
-
-        View header = LayoutInflater.from(mContext).inflate(R.layout.header_air, (ViewGroup) getActivity().findViewById(android.R.id.content), false);
-        headerView = (BannerView) header.findViewById(R.id.header);
-        mRecyclerView.addHeaderView(header);
+        refreshLayout.setOnRefreshListener(refreshListener);
+        mAdapter.setListener(moreListener);
 //        mAdapter.setOnItemClickListener(onItemClickListener);
         return root;
     }
@@ -93,33 +92,14 @@ public class AirFragment extends Fragment implements AirContract.View {
             mEmpty.setVisibility(View.VISIBLE);
         } else {
             mEmpty.setVisibility(View.GONE);
-            mRecyclerView.refreshComplete();
+            refreshLayout.setRefreshing(false);
         }
     }
 
     @Override
     public void showTasks(List<Task> tasks) {
-        if (tasks != null) {
-            List<BannerModel> bannerData = new ArrayList<>();
-            Iterator<Task> iterator = tasks.iterator();
-            int i = 0;
-            while (iterator.hasNext()) {
-                if (i < 6) {
-                    Task task = iterator.next();
-                    String bigImg = task.getImg().replace("small", "big");
-                    BannerModel model = new BannerModel(task.getTitle(), bigImg, task.getUrl());
-                    bannerData.add(model);
-
-                    iterator.remove();
-                    i++;
-                }else{
-                    break;
-                }
-            }
-
-            headerView.setData(bannerData);
+        if (tasks != null)
             mAdapter.updateItems(tasks);
-        }
     }
 
     @Override
@@ -139,42 +119,43 @@ public class AirFragment extends Fragment implements AirContract.View {
     }
 
     @Override
-    public void setPresenter(AirContract.Presenter presenter) {
+    public void setPresenter(PicContract.Presenter presenter) {
         mPresenter = checkNotNull(presenter);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        mPresenter.subscribe();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        mPresenter.unsubscribe();
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        mPresenter.subscribe();
+//    }
+//
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        mPresenter.unsubscribe();
+//    }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ;
-        unbinder.unbind();
+        ;unbinder.unbind();
     }
 
-    XRecyclerView.LoadingListener refreshListener = new XRecyclerView.LoadingListener() {
+    SwipeRefreshLayout.OnRefreshListener refreshListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
             mPresenter.onRefresh();
         }
+    };
 
+    PicAdapter.ListAdapterListener moreListener = new PicAdapter.ListAdapterListener() {
         @Override
-        public void onLoadMore() {
-
+        public void onListEnded() {
+            mPresenter.onLoadMore();
         }
     };
 
-    AirAdapter.OnItemClickListener onItemClickListener = new AirAdapter.OnItemClickListener() {
+    PicAdapter.OnItemClickListener onItemClickListener = new PicAdapter.OnItemClickListener() {
         @Override
         public void onItemClick(View view, int postion) {
             Task task = mAdapter.getItem(postion);
@@ -189,4 +170,20 @@ public class AirFragment extends Fragment implements AirContract.View {
             startActivity(mpdIntent);
         }
     };
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            hasStarted = true;
+            Log.e(TAG, "setUserVisibleHint: 开始界面" + isVisibleToUser );
+            mPresenter.subscribe();
+        } else {
+            if (hasStarted) {
+                hasStarted = false;
+                Log.e(TAG, "setUserVisibleHint: 结束界面" + isVisibleToUser );
+                mPresenter.unsubscribe();
+            }
+        }
+    }
 }
