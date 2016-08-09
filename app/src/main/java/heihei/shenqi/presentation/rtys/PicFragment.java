@@ -44,8 +44,6 @@ public class PicFragment extends Fragment implements PicContract.View {
     RecyclerView mRecyclerView;
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout refreshLayout;
-//    @BindView(R.id.progressbar)
-//    ProgressBar mProgressBar;
     @BindView(R.id.empty)
     RelativeLayout mEmpty;
 
@@ -55,6 +53,7 @@ public class PicFragment extends Fragment implements PicContract.View {
     private Unbinder unbinder;
 
     private boolean hasStarted = false;
+    private boolean isViewed = false;
 
     public static PicFragment newInstance() {
         return new PicFragment();
@@ -64,7 +63,7 @@ public class PicFragment extends Fragment implements PicContract.View {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = getActivity();
-        new PicPresenter(TasksRemoteDataSource.getInstance(mContext),this);
+        new PicPresenter(TasksRemoteDataSource.getInstance(mContext), this);
         mAdapter = new PicAdapter(getContext());
     }
 
@@ -83,6 +82,7 @@ public class PicFragment extends Fragment implements PicContract.View {
         refreshLayout.setOnRefreshListener(refreshListener);
         mAdapter.setListener(moreListener);
 //        mAdapter.setOnItemClickListener(onItemClickListener);
+        isViewed = true;
         return root;
     }
 
@@ -123,22 +123,24 @@ public class PicFragment extends Fragment implements PicContract.View {
         mPresenter = checkNotNull(presenter);
     }
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        mPresenter.subscribe();
-//    }
-//
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        mPresenter.unsubscribe();
-//    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (hasStarted)
+            mPresenter.subscribe();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mPresenter.unsubscribe();
+    }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ;unbinder.unbind();
+        ;
+        unbinder.unbind();
     }
 
     SwipeRefreshLayout.OnRefreshListener refreshListener = new SwipeRefreshLayout.OnRefreshListener() {
@@ -176,13 +178,14 @@ public class PicFragment extends Fragment implements PicContract.View {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             hasStarted = true;
-            Log.e(TAG, "setUserVisibleHint: 开始界面" + isVisibleToUser );
-            mPresenter.subscribe();
+            Log.e(TAG, "setUserVisibleHint: 开始界面" + isVisibleToUser);
+            if(isViewed) {
+                mPresenter.subscribe();
+            }
         } else {
             if (hasStarted) {
                 hasStarted = false;
-                Log.e(TAG, "setUserVisibleHint: 结束界面" + isVisibleToUser );
-                mPresenter.unsubscribe();
+                Log.e(TAG, "setUserVisibleHint: 结束界面" + isVisibleToUser);
             }
         }
     }

@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class AirFragment extends Fragment implements AirContract.View {
 
+    private final String TAG = this.getClass().getSimpleName();
     @BindView(R.id.xrecycler)
     XRecyclerView mRecyclerView;
 
@@ -53,6 +55,9 @@ public class AirFragment extends Fragment implements AirContract.View {
     AirAdapter mAdapter;
     AirContract.Presenter mPresenter;
     private Unbinder unbinder;
+
+    private boolean hasStarted = false;
+    private boolean isViewed = false;
 
     public static AirFragment newInstance() {
         return new AirFragment();
@@ -84,6 +89,7 @@ public class AirFragment extends Fragment implements AirContract.View {
         headerView = (BannerView) header.findViewById(R.id.header);
         mRecyclerView.addHeaderView(header);
 //        mAdapter.setOnItemClickListener(onItemClickListener);
+        isViewed = true;
         return root;
     }
 
@@ -144,22 +150,22 @@ public class AirFragment extends Fragment implements AirContract.View {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();;
+        unbinder.unbind();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        mPresenter.subscribe();
+        if (hasStarted)
+            mPresenter.subscribe();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         mPresenter.unsubscribe();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ;
-        unbinder.unbind();
     }
 
     XRecyclerView.LoadingListener refreshListener = new XRecyclerView.LoadingListener() {
@@ -189,4 +195,22 @@ public class AirFragment extends Fragment implements AirContract.View {
             startActivity(mpdIntent);
         }
     };
+
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            hasStarted = true;
+            Log.e(TAG, "setUserVisibleHint: 开始界面" + isVisibleToUser);
+            if(isViewed) {
+                mPresenter.subscribe();
+            }
+        } else {
+            if (hasStarted) {
+                hasStarted = false;
+                Log.e(TAG, "setUserVisibleHint: 结束界面" + isVisibleToUser);
+            }
+        }
+    }
 }

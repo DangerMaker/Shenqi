@@ -45,7 +45,7 @@ public class HomePageAdapter extends FragmentPagerAdapter{
             case POSITION_HOME_ITEM:
                 return new HomeContainerFragment();
             case POSITION_CHANNEL_ITEM:
-                return   new LuluheiFragment();
+                return   new EmptyFragment();
             case POSITION_SUBSCRIBE_ITEM:
                 return new EmptyFragment();
             case POSITION_VIP_ITEM:

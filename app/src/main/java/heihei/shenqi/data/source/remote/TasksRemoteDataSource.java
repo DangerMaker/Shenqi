@@ -3,7 +3,6 @@ package heihei.shenqi.data.source.remote;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.text.TextUtils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -14,9 +13,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import heihei.frame.BannerModel;
 import heihei.shenqi.Config;
-import heihei.shenqi.data.Air;
 import heihei.shenqi.data.Task;
 import heihei.shenqi.data.source.TasksDataSource;
 import rx.Observable;

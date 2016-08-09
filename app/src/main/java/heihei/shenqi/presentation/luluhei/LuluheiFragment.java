@@ -37,12 +37,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class LuluheiFragment extends Fragment implements LuluheiContract.View {
 
+    private final String TAG = this.getClass().getSimpleName();
     @BindView(R.id.recycler)
     RecyclerView mRecyclerView;
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout refreshLayout;
-//    @BindView(R.id.progressbar)
-//    ProgressBar mProgressBar;
     @BindView(R.id.empty)
     RelativeLayout mEmpty;
 
@@ -50,6 +49,10 @@ public class LuluheiFragment extends Fragment implements LuluheiContract.View {
     TasksAdapter mAdapter;
     LuluheiContract.Presenter mPresenter;
     private Unbinder unbinder;
+
+    private boolean hasStarted = false;
+    private boolean isViewed = false;
+
     public static LuluheiFragment newInstance() {
         return new LuluheiFragment();
     }
@@ -77,6 +80,7 @@ public class LuluheiFragment extends Fragment implements LuluheiContract.View {
         refreshLayout.setOnRefreshListener(refreshListener);
         mAdapter.setListener(moreListener);
         mAdapter.setOnItemClickListener(onItemClickListener);
+        isViewed = true;
         return root;
     }
 
@@ -118,21 +122,22 @@ public class LuluheiFragment extends Fragment implements LuluheiContract.View {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ;unbinder.unbind();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        mPresenter.subscribe();
+        if (hasStarted)
+            mPresenter.subscribe();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         mPresenter.unsubscribe();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ;unbinder.unbind();
     }
 
     SwipeRefreshLayout.OnRefreshListener refreshListener = new SwipeRefreshLayout.OnRefreshListener() {
@@ -164,4 +169,22 @@ public class LuluheiFragment extends Fragment implements LuluheiContract.View {
             startActivity(mpdIntent);
         }
     };
+
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            hasStarted = true;
+            Log.e(TAG, "setUserVisibleHint: 开始界面" + isVisibleToUser);
+            if(isViewed) {
+                mPresenter.subscribe();
+            }
+        } else {
+            if (hasStarted) {
+                hasStarted = false;
+                Log.e(TAG, "setUserVisibleHint: 结束界面" + isVisibleToUser);
+            }
+        }
+    }
 }

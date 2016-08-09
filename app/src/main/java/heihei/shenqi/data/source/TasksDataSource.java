@@ -2,7 +2,6 @@ package heihei.shenqi.data.source;
 
 import java.util.List;
 
-import heihei.shenqi.data.Air;
 import heihei.shenqi.data.Task;
 import rx.Observable;
 

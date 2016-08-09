@@ -91,5 +91,4 @@ public class AirPresenter implements AirContract.Presenter {
         mPage = INIT_PAGE_NUM;
         loadTasks();
     }
-
 }
